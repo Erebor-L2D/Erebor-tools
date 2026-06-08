@@ -1,0 +1,46 @@
+id: run-1
+version: v3
+erebortools_version: v0.1.0
+status: complete
+description: new test run for mbhb+vgb+noise after implementing clustering and sorting.
+date: '2026-06-08'
+domain: frequency
+start_freq_hz: 0.0001
+end_freq_hz: 0.029
+sampling_frequency_hz: 0.2
+observation_time: 273.9 days
+dataset: mojito light
+sources:
+- MBHB
+- GB
+- NOISE
+source_details:
+- type: MBHB
+  n_found: 6
+  waveform_model: PhenomTHMTDIWaveform
+  waveform_model_link: https://github.com/Erebor-L2D/LISAanalysistools/blob/9d63bb1e63e7b8f640d3780551d9421df5245992/src/lisatools/sources/bbh/waveform.py#L130
+  freq_min: 0.0001
+  freq_max: 0.029
+  n_bands: 1
+  prior_link: https://priors-database-f0027f.gitlab.io/mojito_light_1a.html#massive-black-hole-binaries-mbhb
+  n_posteriors: 1
+- type: GB
+  n_found: 25
+  waveform_model: GBGPU
+  waveform_model_link: https://github.com/Erebor-L2D/GBGPU/tree/cdl1-run0
+  freq_min: 0.0001093583907126886
+  freq_max: 0.02891033149390691
+  n_bands: 707
+  prior_link: https://priors-database-f0027f.gitlab.io/mojito_light_1a.html#massive-black-hole-binaries-mbhb
+  n_posteriors: 1
+- type: NOISE
+  noise_model: parametric
+  prior_link: https://github.com/Erebor-L2D/LISAanalysistools/blob/9d63bb1e63e7b8f640d3780551d9421df5245992/src/lisatools/sensitivity.py#L1797
+results:
+  cluster_paths:
+  - host: cluster
+    path: /work/asantini/globalfit/l3c_exchange/mojito_light_results/CDL1run1_erebor_v3_2026-06-08T12:35:14/input_data.h5
+  cloud_urls: []
+config: parametric
+contact: ereborl2d@googlegroups.com
+plots: []

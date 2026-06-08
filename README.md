@@ -4,3 +4,8 @@ This repository contains useful tools for interacting with the Erebor codebase, 
 
 At the moment, the repository contains:
 - [Installation instructions](./installation.md) for the various packages used in the Erebor codebase. Please open an issue here if you have any trouble with the installation process, or if you think we can make it easier.
+
+## Runs catalog
+A browsable catalog of global-fit runs (sources, versions, where to find
+results) is published from this repo via GitHub Pages. See [`docs/`](./docs) and
+the [changelog](./docs/changelog.md).

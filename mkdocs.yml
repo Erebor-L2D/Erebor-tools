@@ -1,0 +1,47 @@
+site_name: Erebor global-fit runs
+site_description: Catalog of Erebor LISA global-fit runs, sources, and results.
+site_url: https://erebor-l2d.github.io/Erebor-tools/
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle: { icon: material/weather-night, name: Switch to dark mode }
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle: { icon: material/weather-sunny, name: Switch to light mode }
+  features:
+    - navigation.sections
+    - content.code.copy
+    - search.highlight
+
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - Changelog: changelog.md
+
+hooks:
+  - hooks.py
+
+extra_css:
+  - assets/catalog.css
+extra_javascript:
+  - assets/catalog.js
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - pymdownx.superfences
+  - pymdownx.highlight
+
+validation:
+  nav:
+    omitted_files: ignore
+  links:
+    not_found: warn
+
+exclude_docs: |
+  superpowers/

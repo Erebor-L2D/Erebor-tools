@@ -1,0 +1,91 @@
+{
+    "global_fit_version": "CDL1run1_v3",
+    "global_fit_contact": "ereborl2d@googlegroups.com",
+    "global_fit_code_link": "https://github.com/Erebor-L2D/LISAanalysistools/releases/tag/cdl1-run_0",
+    "input_data_link": "/work/asantini/globalfit/l3c_exchange/mojito_light_results/CDL1run1_erebor_v3_2026-06-08T12:35:14/input_data.h5",
+    "input_reference": "mojito light",
+    "noise_model": "parametric",
+    "noise_model_code_link": "https://github.com/Erebor-L2D/LISAanalysistools/blob/9d63bb1e63e7b8f640d3780551d9421df5245992/src/lisatools/sensitivity.py#L1797",
+    "domain_metadata": {
+        "class": "FDSettings",
+        "args": [
+            2366862,
+            4.225005186193866e-08
+        ],
+        "kwargs": {
+            "min_freq": 0.0001,
+            "max_freq": 0.029,
+            "force_backend": "cpu"
+        }
+    },
+    "orbits_metadata": {
+        "class": "L1Orbits",
+        "kwargs": {
+            "armlength": 2493162305.42235,
+            "force_backend": "cpu",
+            "frame": "icrs"
+        }
+    },
+    "sensitivity_metadata": {
+        "class": "XYZSensitivityBackend",
+        "kwargs": {
+            "tdi_generation": 2,
+            "use_splines": false,
+            "spline_order": "cubic",
+            "force_backend": "cpu",
+            "mask_percentage": 0.02,
+            "galactic_grid_kwargs": null
+        }
+    },
+    "preprocessing_metadata": {
+        "highpass_kwargs": {
+            "cutoff": 1e-05,
+            "order": 2,
+            "zero_phase": true
+        },
+        "trim_kwargs": {
+            "duration": 0.02,
+            "is_percent": true,
+            "trimming_type": "from_each_end"
+        },
+        "Tobs": 23668612.322659194,
+        "lowpass_kwargs": {
+            "cutoff": 0.1,
+            "order": 2,
+            "zero_phase": true
+        },
+        "downsample_kwargs": {
+            "target_fs": 0.2,
+            "window": [
+                "kaiser",
+                31.0
+            ]
+        }
+    },
+    "submission_parent_folder": "/work/asantini/globalfit/l3c_exchange/mojito_light_results/",
+    "submission_timestamp": "2026-06-08T12:35:14",
+    "global_fit_codename": "erebor",
+    "comment": "new test run for mbhb+vgb+noise after implementing clustering and sorting.",
+    "found_source_types_list": [
+        "MBHB",
+        "GB",
+        "NOISE"
+    ],
+    "observation_period_begin": "2038.02.19.17.50.59",
+    "observation_period_end": "2038.11.20.16.27.49",
+    "time_step": 5.0,
+    "number_of_time_samples": 4733722,
+    "window_type": "tukey",
+    "window_alpha": 0.0004225005186193866,
+    "effective_observation_duration": "0000.00.273.22.36.50",
+    "tdi_channels": [
+        "X",
+        "Y",
+        "Z"
+    ],
+    "searched_source_types_list": [
+        "MBHB",
+        "GB",
+        "NOISE"
+    ]
+}

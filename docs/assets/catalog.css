@@ -1,0 +1,39 @@
+/* Status badges */
+.gf-badge { display:inline-block; padding:2px 8px; border-radius:10px;
+  font-size:11px; font-weight:600; color:#fff; }
+.gf-done { background:#2e7d32; }
+.gf-run  { background:#1565c0; }
+.gf-plan { background:#777; }
+.gf-arch { background:#9c5700; }
+
+/* Source chips */
+.gf-chip { display:inline-block; padding:1px 7px; margin:1px; border-radius:8px;
+  font-size:11px; background:var(--md-default-fg-color--lightest); }
+
+/* Toolbar / toggle */
+.gf-toolbar { display:flex; gap:8px; align-items:center; margin:10px 0 14px; }
+.gf-label { font-size:13px; opacity:.7; }
+.gf-toggle { display:inline-flex; border:1px solid var(--md-default-fg-color--lighter);
+  border-radius:8px; overflow:hidden; }
+.gf-toggle button { border:0; background:transparent; padding:6px 16px; font-size:13px;
+  font-weight:600; cursor:pointer; color:var(--md-default-fg-color--light); }
+.gf-toggle button.active { background:var(--md-primary-fg-color); color:#fff; }
+
+/* Table */
+.gf-tbl { width:100%; border-collapse:collapse; font-size:13px; }
+.gf-tbl th { text-align:left; padding:6px 8px; font-size:11px; text-transform:uppercase;
+  opacity:.7; border-bottom:2px solid var(--md-default-fg-color--lighter); }
+.gf-tbl td { padding:6px 8px; vertical-align:top;
+  border-bottom:1px solid var(--md-default-fg-color--lightest); }
+.gf-sub { font-size:11px; opacity:.6; }
+.gf-rpath { cursor:help; text-decoration:underline dotted; }
+
+/* Cards */
+.gf-cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px; }
+.gf-card { border:1px solid var(--md-default-fg-color--lighter); border-radius:10px; padding:12px; }
+.gf-card h4 { margin:0 0 4px 0; font-size:15px; }
+.gf-meta { font-size:11px; opacity:.6; margin:2px 0 6px; }
+.gf-desc { font-size:13px; margin:6px 0; }
+.gf-links { font-size:12px; }
+
+.gf-hidden { display:none; }

@@ -1,0 +1,28 @@
+# Copy this directory to runs/<your-run-id>/ and fill it in.
+# Required: id, status, description. Everything else is optional.
+id: run-X
+version: ""                 # iteration of this run, e.g. v3
+erebortools_version: ""    # erebortools release pinning the stack, e.g. v0.1.0
+status: planned
+description: >
+  One or two sentences describing what this run was for.
+
+date: ""                   # date the run was performed, YYYY-MM-DD
+
+domain: ""                 # frequency | time | time-frequency
+start_freq_hz: null
+end_freq_hz: null
+sampling_frequency_hz: null
+observation_time: ""
+
+dataset: ""
+sources: []                # high-level chips, e.g. [MBHB, GB, NOISE]
+source_details: []         # per-source-type metadata; see runs/run-1 for an example
+
+results:
+  cluster_paths: []
+  cloud_urls: []
+
+config: ""
+contact: ""
+plots: []

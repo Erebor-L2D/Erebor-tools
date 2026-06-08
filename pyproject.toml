@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "erebortools"
+version = "0.1.0"
+description = "Erebor global-fit utilities and runs catalog website"
+requires-python = ">=3.12"
+dependencies = [
+  "mkdocs-material>=9.5",
+  "pydantic>=2.6",
+  "pyyaml>=6.0",
+  "pymdown-extensions>=10.7"
+]
+
+[project.optional-dependencies]
+# Install with: pip install ".[globalfit]"  (uv: uv pip install ".[globalfit]")
+# phentax is on TestPyPI: uv reads the [tool.uv] index below; plain pip needs
+#   --extra-index-url https://test.pypi.org/simple/
+globalfit = [
+  "eryn @ git+https://github.com/Erebor-L2D/Eryn.git@v1.2.7.post1",
+  "gpubackendtools @ git+https://github.com/Erebor-L2D/GPUBackendTools.git@v0.1.1.post1",
+  "lisaanalysistools @ git+https://github.com/Erebor-L2D/LISAanalysistools.git@v1.2.8.post2",
+  "gbgpu @ git+https://github.com/Erebor-L2D/GBGPU.git@v1.2.5.post1",
+  "fastlisaresponse @ git+https://github.com/asantini29/lisa-on-gpu.git@v1.2.1.post1",
+  "phentax==0.1.1b5"
+]
+
+[dependency-groups]
+dev = ["pytest>=8.0"]
+
+[[tool.uv.index]]
+name = "testpypi"
+url = "https://test.pypi.org/simple/"
+explicit = true            # only used by packages that opt in via [tool.uv.sources]
+
+[tool.uv.sources]
+phentax = { index = "testpypi" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
