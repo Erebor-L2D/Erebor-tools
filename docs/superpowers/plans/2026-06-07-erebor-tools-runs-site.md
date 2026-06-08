@@ -10,6 +10,15 @@
 
 **Spec:** `docs/superpowers/specs/2026-06-07-erebor-tools-runs-site-design.md` (this repo, alongside this plan).
 
+> **Update (2026-06-08): module relocated.** The Python package was renamed
+> `erebor_site` → `erebortools` and moved to a **src layout**: the website code now
+> lives in `src/erebortools/website/` (`run_meta.py`, `render.py`, `from_metadata.py`).
+> Wherever this plan says `erebor_site/<x>.py` read `src/erebortools/website/<x>.py`,
+> and wherever it says `from erebor_site.<x>` / `python -m erebor_site.<x>` read
+> `erebortools.website.<x>`. `pyproject.toml` uses `name = "erebortools"` and
+> `[tool.hatch.build.targets.wheel] packages = ["src/erebortools"]`. `tests/`, `runs/`,
+> `docs/`, `hooks.py`, and `mkdocs.yml` stay at the repo root.
+
 ---
 
 ## Working directory & conventions
