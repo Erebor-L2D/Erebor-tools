@@ -29,7 +29,7 @@ most machines — so point CMake / `pkg-config` at it by exporting two variables
 conda create -n erebor python=3.12
 conda activate erebor
 
-conda install -c conda-forge lapack lapacke
+conda install -c conda-forge liblapack liblapacke pkg-config
 export PKG_CONFIG_PATH="$CONDA_PREFIX/lib/pkgconfig:$PKG_CONFIG_PATH"
 export CMAKE_PREFIX_PATH="$CONDA_PREFIX:$CMAKE_PREFIX_PATH"
 ```
