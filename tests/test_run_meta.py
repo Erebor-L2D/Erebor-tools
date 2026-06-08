@@ -59,3 +59,14 @@ def test_load_run_error_names_file(tmp_path):
     with pytest.raises(ValueError) as exc:
         load_run(bad)
     assert "bad/meta.yaml" in str(exc.value)
+
+
+def test_repo_runs_all_valid():
+    """Every committed runs/*/meta.yaml validates against RunMeta."""
+    repo_runs = Path(__file__).resolve().parents[1] / "runs"
+    loaded = load_runs(repo_runs)
+    ids = [r.id for r in loaded]
+    assert "run-0" in ids
+    run0 = next(r for r in loaded if r.id == "run-0")
+    assert run0.code.tag == "cdl1-run0"
+    assert run0.sources == ["PSD"]

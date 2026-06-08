@@ -1,0 +1,26 @@
+# Copy this directory to runs/<your-run-id>/ and fill it in.
+# Required: id, status, description. Everything else is optional.
+id: run-X                      # URL slug + display name, e.g. run-1
+status: planned                # planned | running | complete | archived
+description: >
+  One or two sentences describing what this run was for.
+
+date_begin: ""                 # e.g. 2026-06
+date_end: ""
+
+code:
+  tag: ""                      # TAG_NAME, e.g. cdl1-run1
+  phentax_version: ""          # e.g. 0.1.1b4
+  code_link: ""
+
+sources: []                    # e.g. [MBHB, GB, PSD]
+dataset: ""                    # e.g. LDC Sangria / simulated
+observation_time: ""           # e.g. "1 yr"
+
+results:
+  cluster_paths: []            # list of {host, path}
+  cloud_urls: []
+
+config: ""
+contact: ""
+plots: []                      # reserved for future figures
