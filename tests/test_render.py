@@ -17,11 +17,13 @@ def test_catalog_has_both_views_and_toggle():
 
 
 def test_catalog_renders_run_fields():
-    html = render_catalog([_run(sources=["MBHB", "GB"], dataset="mojito light")])
+    html = render_catalog([_run(sources=["MBHB", "GB"], dataset="mojito light", version="v3")])
     assert 'href="runs/run-1/"' in html
     assert "gf-done" in html
     assert ">MBHB<" in html and ">GB<" in html
     assert "mojito light" in html
+    assert "<th>Version</th>" in html
+    assert ">v3<" in html
 
 
 def test_catalog_escapes_html():
@@ -32,6 +34,7 @@ def test_catalog_escapes_html():
 
 def test_run_page_has_analysis_and_sources():
     md = render_run_page(_run(
+        version="v3",
         domain="frequency",
         start_freq_hz=0.0001,
         end_freq_hz=0.029,
@@ -57,6 +60,7 @@ def test_run_page_has_analysis_and_sources():
     assert "[PhenomTHMTDIWaveform](https://example.org/wf)" in md
     assert "### NOISE" in md
     assert "Noise model:** parametric" in md
+    assert "**Version:** v3" in md
 
 
 def test_run_page_no_results_message():

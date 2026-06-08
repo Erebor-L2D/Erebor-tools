@@ -49,6 +49,7 @@ class RunMeta(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     id: str
+    version: str | None = None  # iteration of this run, e.g. v3
     status: Status
     description: str
     date: str | None = None  # date the run was performed (YYYY-MM-DD)

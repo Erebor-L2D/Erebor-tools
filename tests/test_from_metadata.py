@@ -2,10 +2,15 @@ import yaml
 from pathlib import Path
 
 from erebortools.website.run_meta import RunMeta
-from erebortools.website.from_metadata import derive_id, map_metadata, convert
+from erebortools.website.from_metadata import derive_id, derive_version, map_metadata, convert
 
 EXAMPLE = Path(__file__).resolve().parents[1] / "example"
 SAMPLE = EXAMPLE / "global_metadata.json"
+
+
+def test_derive_version():
+    assert derive_version("CDL1run1_v3") == "v3"
+    assert derive_version("cdl1_run0") is None
 
 
 def test_derive_id():
@@ -27,6 +32,7 @@ def test_map_metadata_analysis_fields():
     assert m["dataset"] == "mojito light"
     assert set(m["sources"]) == {"MBHB", "GB", "NOISE"}
     assert m["date"] == "2026-06-08"
+    assert m["version"] == "v3"
 
 
 def test_map_metadata_source_details():

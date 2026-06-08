@@ -22,6 +22,12 @@ _DOMAIN_LABELS = {
 }
 
 
+def derive_version(global_fit_version: str) -> str | None:
+    """'CDL1run1_v3' -> 'v3'; returns None if no _v<N> token is present."""
+    m = re.search(r"_v(\d+)", global_fit_version)
+    return f"v{m.group(1)}" if m else None
+
+
 def derive_id(global_fit_version: str) -> str:
     """Best-effort run id: 'CDL1run1_v3' -> 'run-1', 'cdl1_run0' -> 'run-0'."""
     m = re.search(r"run[_-]?(\d+)", global_fit_version, re.IGNORECASE)
@@ -92,6 +98,7 @@ def map_metadata(d: dict, folder: Path) -> dict:
 
     return {
         "id": derive_id(gfv) if gfv else "",
+        "version": derive_version(gfv) if gfv else None,
         "domain": _domain_label(d),
         "start_freq_hz": kw.get("min_freq"),
         "end_freq_hz": kw.get("max_freq"),
@@ -112,6 +119,7 @@ def build_meta(m: dict) -> dict:
     """Assemble the ordered meta.yaml dict (status defaults to complete)."""
     return {
         "id": m["id"],
+        "version": m["version"],
         "status": "complete",
         "description": m["description"],
         "date": m["date"],

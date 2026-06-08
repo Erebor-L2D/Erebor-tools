@@ -1,4 +1,5 @@
 id: run-1
+version: v3
 status: complete
 description: new test run for mbhb+vgb+noise after implementing clustering and sorting.
 date: '2026-06-08'

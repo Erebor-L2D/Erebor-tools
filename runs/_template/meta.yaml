@@ -1,6 +1,7 @@
 # Copy this directory to runs/<your-run-id>/ and fill it in.
 # Required: id, status, description. Everything else is optional.
 id: run-X
+version: ""                 # iteration of this run, e.g. v3
 status: planned
 description: >
   One or two sentences describing what this run was for.

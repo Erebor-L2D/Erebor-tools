@@ -45,6 +45,7 @@ def render_catalog(runs: list[RunMeta]) -> str:
         rows.append(
             "<tr>"
             f'<td><a class="gf-link" href="runs/{rid}/">{rid}</a></td>'
+            f'<td>{html.escape(r.version or "—")}</td>'
             f"<td>{_badge(status)}</td>"
             f"<td>{_chips(r.sources)}</td>"
             f'<td>{html.escape(r.dataset or "—")}</td>'
@@ -55,7 +56,7 @@ def render_catalog(runs: list[RunMeta]) -> str:
         cards.append(
             '<div class="gf-card">'
             f'<h4><a class="gf-link" href="runs/{rid}/">{rid}</a> {_badge(status)}</h4>'
-            f'<div class="gf-meta">{html.escape(r.dataset or "—")} · {date}</div>'
+            f'<div class="gf-meta">{(html.escape(r.version) + " · ") if r.version else ""}{html.escape(r.dataset or "—")} · {date}</div>'
             f"<div>{_chips(r.sources)}</div>"
             f'<div class="gf-desc">{html.escape(r.description)}</div>'
             f'<div class="gf-links">{_result_links(r)}</div>'
@@ -73,7 +74,7 @@ def render_catalog(runs: list[RunMeta]) -> str:
     table = (
         '<div id="view-table" class="gf-view">'
         '<table class="gf-tbl"><thead><tr>'
-        "<th>Run</th><th>Status</th><th>Sources</th>"
+        "<th>Run</th><th>Version</th><th>Status</th><th>Sources</th>"
         "<th>Dataset</th><th>Date</th><th>Results</th>"
         "</tr></thead><tbody>" + "".join(rows) + "</tbody></table></div>"
     )
@@ -115,6 +116,8 @@ def render_run_page(run: RunMeta) -> str:
     lines: list[str] = [f"# {run.id}", "", _badge(run.status.value), "", run.description, ""]
 
     analysis: list[str] = []
+    if run.version:
+        analysis.append(f"- **Version:** {run.version}")
     if run.domain:
         analysis.append(f"- **Domain:** {run.domain}")
     if run.start_freq_hz is not None:
