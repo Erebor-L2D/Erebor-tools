@@ -12,6 +12,15 @@ _STATUS_CLASS = {
     "archived": "gf-arch",
 }
 
+_EREBORTOOLS_RELEASE = "https://github.com/Erebor-L2D/Erebor-tools/releases/tag/"
+
+
+def _erebortools_link(version: str | None) -> str:
+    if not version:
+        return "—"
+    v = html.escape(version)
+    return f'<a class="gf-link" href="{_EREBORTOOLS_RELEASE}{v}">{v}</a>'
+
 
 def _badge(status: str) -> str:
     cls = _STATUS_CLASS.get(status, "gf-plan")
@@ -46,6 +55,7 @@ def render_catalog(runs: list[RunMeta]) -> str:
             "<tr>"
             f'<td><a class="gf-link" href="runs/{rid}/">{rid}</a></td>'
             f'<td>{html.escape(r.version or "—")}</td>'
+            f"<td>{_erebortools_link(r.erebortools_version)}</td>"
             f"<td>{_badge(status)}</td>"
             f"<td>{_chips(r.sources)}</td>"
             f'<td>{html.escape(r.dataset or "—")}</td>'
@@ -56,7 +66,7 @@ def render_catalog(runs: list[RunMeta]) -> str:
         cards.append(
             '<div class="gf-card">'
             f'<h4><a class="gf-link" href="runs/{rid}/">{rid}</a> {_badge(status)}</h4>'
-            f'<div class="gf-meta">{(html.escape(r.version) + " · ") if r.version else ""}{html.escape(r.dataset or "—")} · {date}</div>'
+            f'<div class="gf-meta">{(html.escape(r.version) + " · ") if r.version else ""}{html.escape(r.dataset or "—")} · {date}{(" · erebortools " + html.escape(r.erebortools_version)) if r.erebortools_version else ""}</div>'
             f"<div>{_chips(r.sources)}</div>"
             f'<div class="gf-desc">{html.escape(r.description)}</div>'
             f'<div class="gf-links">{_result_links(r)}</div>'
@@ -74,7 +84,7 @@ def render_catalog(runs: list[RunMeta]) -> str:
     table = (
         '<div id="view-table" class="gf-view">'
         '<table class="gf-tbl"><thead><tr>'
-        "<th>Run</th><th>Version</th><th>Status</th><th>Sources</th>"
+        "<th>Run</th><th>Version</th><th>erebortools</th><th>Status</th><th>Sources</th>"
         "<th>Dataset</th><th>Date</th><th>Results</th>"
         "</tr></thead><tbody>" + "".join(rows) + "</tbody></table></div>"
     )
@@ -118,6 +128,11 @@ def render_run_page(run: RunMeta) -> str:
     analysis: list[str] = []
     if run.version:
         analysis.append(f"- **Version:** {run.version}")
+    if run.erebortools_version:
+        analysis.append(
+            f"- **erebortools:** [{run.erebortools_version}]"
+            f"({_EREBORTOOLS_RELEASE}{run.erebortools_version})"
+        )
     if run.domain:
         analysis.append(f"- **Domain:** {run.domain}")
     if run.start_freq_hz is not None:

@@ -115,11 +115,12 @@ def map_metadata(d: dict, folder: Path) -> dict:
     }
 
 
-def build_meta(m: dict) -> dict:
+def build_meta(m: dict, erebortools_version: str | None = None) -> dict:
     """Assemble the ordered meta.yaml dict (status defaults to complete)."""
     return {
         "id": m["id"],
         "version": m["version"],
+        "erebortools_version": erebortools_version,
         "status": "complete",
         "description": m["description"],
         "date": m["date"],
@@ -144,16 +145,17 @@ def build_meta(m: dict) -> dict:
 _TODO_HEADER = (
     "# TODO: review this draft before committing.\n"
     "#   - confirm `status` (planned | running | complete | archived)\n"
-    "#   - set results.cluster_paths[].host and add cloud_urls if any\n\n"
+    "#   - set results.cluster_paths[].host and add cloud_urls if any\n"
+    "#   - set erebortools_version to the erebortools release that pins this stack\n\n"
 )
 
 
-def convert(json_path, out_dir=Path("runs")) -> Path:
+def convert(json_path, out_dir=Path("runs"), erebortools_version: str | None = None) -> Path:
     """Read global_metadata.json (+ sibling source files), write a validated draft."""
     json_path = Path(json_path)
     d = json.loads(json_path.read_text())
     m = map_metadata(d, json_path.parent)
-    meta = build_meta(m)
+    meta = build_meta(m, erebortools_version)
     RunMeta.model_validate(meta)  # fail loudly if the draft is invalid
     text = _TODO_HEADER + yaml.safe_dump(meta, sort_keys=False, allow_unicode=True)
     out = Path(out_dir) / m["id"] / "meta.yaml"
@@ -168,8 +170,10 @@ def main(argv: list[str] | None = None) -> None:
     )
     parser.add_argument("json_path", type=Path, help="path to global_metadata.json")
     parser.add_argument("-o", "--out-dir", type=Path, default=Path("runs"))
+    parser.add_argument("--erebortools-version", default=None,
+                        help="erebortools release that pins this run's stack, e.g. v0.1.0")
     args = parser.parse_args(argv)
-    out = convert(args.json_path, args.out_dir)
+    out = convert(args.json_path, args.out_dir, args.erebortools_version)
     print(f"Wrote {out}  — review the # TODO fields before committing.")
 
 

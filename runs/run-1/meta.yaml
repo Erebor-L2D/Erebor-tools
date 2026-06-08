@@ -1,5 +1,6 @@
 id: run-1
 version: v3
+erebortools_version: v0.1.0
 status: complete
 description: new test run for mbhb+vgb+noise after implementing clustering and sorting.
 date: '2026-06-08'

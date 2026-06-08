@@ -2,6 +2,7 @@
 # Required: id, status, description. Everything else is optional.
 id: run-X
 version: ""                 # iteration of this run, e.g. v3
+erebortools_version: ""    # erebortools release pinning the stack, e.g. v0.1.0
 status: planned
 description: >
   One or two sentences describing what this run was for.

@@ -47,8 +47,9 @@ def test_map_metadata_source_details():
 
 
 def test_convert_writes_valid_yaml(tmp_path):
-    out = convert(SAMPLE, tmp_path)
+    out = convert(SAMPLE, tmp_path, erebortools_version="v0.1.0")
     assert out == tmp_path / "run-1" / "meta.yaml"
     text = out.read_text()
     assert "# TODO" in text
+    assert "erebortools_version: v0.1.0" in text
     RunMeta.model_validate(yaml.safe_load(text))

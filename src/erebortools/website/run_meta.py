@@ -50,6 +50,7 @@ class RunMeta(BaseModel):
 
     id: str
     version: str | None = None  # iteration of this run, e.g. v3
+    erebortools_version: str | None = None  # erebortools release pinning the stack, e.g. v0.1.0
     status: Status
     description: str
     date: str | None = None  # date the run was performed (YYYY-MM-DD)
