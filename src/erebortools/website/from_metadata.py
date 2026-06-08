@@ -46,17 +46,18 @@ def _load_source_file(path: Path) -> dict:
     sd = json.loads(path.read_text())
     fr = sd.get("frequency_ranges") or []
     flat = [x for rng in fr for x in rng]
-    n_found = len(sd.get("detection_statistic") or sd.get("posterior_files") or [])
+    unique_posteriors = list(dict.fromkeys(sd.get("posterior_files") or []))
+    n_found = len(sd.get("detection_statistic") or []) or len(unique_posteriors) or None
     return {
         "type": str(sd.get("source_type", "")).upper(),
-        "n_found": n_found or None,
+        "n_found": n_found,
         "waveform_model": sd.get("waveform_model") or None,
         "waveform_model_link": sd.get("waveform_model_code_link") or None,
         "freq_min": min(flat) if flat else None,
         "freq_max": max(flat) if flat else None,
         "n_bands": len(fr) or None,
         "prior_link": sd.get("prior_model_code_link") or None,
-        "n_posteriors": len(sd.get("posterior_files") or []) or None,
+        "n_posteriors": len(unique_posteriors) or None,
     }
 
 
@@ -97,8 +98,7 @@ def map_metadata(d: dict, folder: Path) -> dict:
         "sampling_frequency_hz": fs,
         "observation_time": _seconds_human(tobs) if tobs else (d.get("effective_observation_duration") or None),
         "dataset": d.get("input_reference") or None,
-        "date_begin": d.get("observation_period_begin") or d.get("submission_timestamp") or None,
-        "date_end": d.get("observation_period_end") or None,
+        "date": (d.get("submission_timestamp") or "").split("T")[0] or None,
         "contact": d.get("global_fit_contact") or None,
         "description": d.get("comment") or "TODO: describe this run",
         "config": d.get("noise_model") or None,
@@ -114,8 +114,7 @@ def build_meta(m: dict) -> dict:
         "id": m["id"],
         "status": "complete",
         "description": m["description"],
-        "date_begin": m["date_begin"],
-        "date_end": m["date_end"],
+        "date": m["date"],
         "domain": m["domain"],
         "start_freq_hz": m["start_freq_hz"],
         "end_freq_hz": m["end_freq_hz"],

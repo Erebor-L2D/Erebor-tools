@@ -40,7 +40,7 @@ def render_catalog(runs: list[RunMeta]) -> str:
     cards: list[str] = []
     for r in runs:
         status = r.status.value
-        date = html.escape(r.date_begin or "—")
+        date = html.escape(r.date or "—")
         rid = html.escape(r.id)
         rows.append(
             "<tr>"
@@ -127,9 +127,8 @@ def render_run_page(run: RunMeta) -> str:
         analysis.append(f"- **Observation time:** {run.observation_time}")
     if run.dataset:
         analysis.append(f"- **Dataset:** {run.dataset}")
-    if run.date_begin:
-        period = run.date_begin + (f" → {run.date_end}" if run.date_end else "")
-        analysis.append(f"- **Period:** {period}")
+    if run.date:
+        analysis.append(f"- **Run date:** {run.date}")
     if run.contact:
         analysis.append(f"- **Contact:** {run.contact}")
     if analysis:

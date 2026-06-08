@@ -26,6 +26,7 @@ def test_map_metadata_analysis_fields():
     assert abs(m["sampling_frequency_hz"] - 0.2) < 1e-9
     assert m["dataset"] == "mojito light"
     assert set(m["sources"]) == {"MBHB", "GB", "NOISE"}
+    assert m["date"] == "2026-06-08"
 
 
 def test_map_metadata_source_details():
@@ -33,7 +34,9 @@ def test_map_metadata_source_details():
     d = json.loads(SAMPLE.read_text())
     sd = {s["type"]: s for s in map_metadata(d, EXAMPLE)["source_details"]}
     assert sd["MBHB"]["n_found"] == 6
+    assert sd["MBHB"]["n_posteriors"] == 1
     assert sd["GB"]["n_found"] == 25
+    assert sd["GB"]["n_posteriors"] == 1
     assert sd["NOISE"]["noise_model"] == "parametric"
 
 

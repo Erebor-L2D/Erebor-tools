@@ -5,8 +5,7 @@ status: planned
 description: >
   One or two sentences describing what this run was for.
 
-date_begin: ""
-date_end: ""
+date: ""                   # date the run was performed, YYYY-MM-DD
 
 domain: ""                 # frequency | time | time-frequency
 start_freq_hz: null

@@ -51,8 +51,7 @@ class RunMeta(BaseModel):
     id: str
     status: Status
     description: str
-    date_begin: str | None = None
-    date_end: str | None = None
+    date: str | None = None  # date the run was performed (YYYY-MM-DD)
 
     # analysis configuration
     domain: str | None = None  # frequency | time | time-frequency

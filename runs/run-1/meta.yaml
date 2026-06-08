@@ -1,8 +1,7 @@
 id: run-1
 status: complete
 description: new test run for mbhb+vgb+noise after implementing clustering and sorting.
-date_begin: 2038.02.19.17.50.59
-date_end: 2038.11.20.16.27.49
+date: '2026-06-08'
 domain: frequency
 start_freq_hz: 0.0001
 end_freq_hz: 0.029
@@ -22,7 +21,7 @@ source_details:
   freq_max: 0.029
   n_bands: 1
   prior_link: https://priors-database-f0027f.gitlab.io/mojito_light_1a.html#massive-black-hole-binaries-mbhb
-  n_posteriors: 6
+  n_posteriors: 1
 - type: GB
   n_found: 25
   waveform_model: GBGPU
@@ -31,7 +30,7 @@ source_details:
   freq_max: 0.02891033149390691
   n_bands: 707
   prior_link: https://priors-database-f0027f.gitlab.io/mojito_light_1a.html#massive-black-hole-binaries-mbhb
-  n_posteriors: 25
+  n_posteriors: 1
 - type: NOISE
   noise_model: parametric
   prior_link: https://github.com/Erebor-L2D/LISAanalysistools/blob/9d63bb1e63e7b8f640d3780551d9421df5245992/src/lisatools/sensitivity.py#L1797
