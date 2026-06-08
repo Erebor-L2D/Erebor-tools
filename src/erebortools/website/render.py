@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import html
 
-from .run_meta import RunMeta
+from .run_meta import RunMeta, SourceDetail
 
 _STATUS_CLASS = {
     "complete": "gf-done",
@@ -40,13 +40,11 @@ def render_catalog(runs: list[RunMeta]) -> str:
     cards: list[str] = []
     for r in runs:
         status = r.status.value
-        tag = html.escape(r.code.tag or "—")
         date = html.escape(r.date_begin or "—")
         rid = html.escape(r.id)
         rows.append(
             "<tr>"
-            f'<td><a class="gf-link" href="runs/{rid}/">{rid}</a>'
-            f'<br><span class="gf-sub">{tag}</span></td>'
+            f'<td><a class="gf-link" href="runs/{rid}/">{rid}</a></td>'
             f"<td>{_badge(status)}</td>"
             f"<td>{_chips(r.sources)}</td>"
             f'<td>{html.escape(r.dataset or "—")}</td>'
@@ -57,7 +55,7 @@ def render_catalog(runs: list[RunMeta]) -> str:
         cards.append(
             '<div class="gf-card">'
             f'<h4><a class="gf-link" href="runs/{rid}/">{rid}</a> {_badge(status)}</h4>'
-            f'<div class="gf-meta">{tag} · {date}</div>'
+            f'<div class="gf-meta">{html.escape(r.dataset or "—")} · {date}</div>'
             f"<div>{_chips(r.sources)}</div>"
             f'<div class="gf-desc">{html.escape(r.description)}</div>'
             f'<div class="gf-links">{_result_links(r)}</div>'
@@ -86,46 +84,63 @@ def render_catalog(runs: list[RunMeta]) -> str:
     return toolbar + table + cards_html
 
 
-def render_install_table(runs: list[RunMeta]) -> str:
-    """Return a Markdown run -> version table for the installation page."""
-    lines = [
-        "| Run | TAG_NAME | PHENTAX_VERSION | Status |",
-        "|---|---|---|---|",
-    ]
-    for r in runs:
-        tag = r.code.tag or "—"
-        ver = r.code.phentax_version or "—"
-        # Link the generated .md (not a directory URL) so MkDocs rewrites it to the
-        # correct page-relative path and --strict link validation passes.
-        lines.append(f"| [{r.id}](runs/{r.id}.md) | `{tag}` | `{ver}` | {r.status.value} |")
-    return "\n".join(lines)
+def _render_source(sd: SourceDetail) -> list[str]:
+    out = [f"### {sd.type}", ""]
+    if sd.noise_model:
+        out.append(f"- **Noise model:** {sd.noise_model}")
+    if sd.n_found is not None:
+        out.append(f"- **Sources found:** {sd.n_found}")
+    if sd.waveform_model:
+        wm = (
+            f"[{sd.waveform_model}]({sd.waveform_model_link})"
+            if sd.waveform_model_link
+            else sd.waveform_model
+        )
+        out.append(f"- **Waveform model:** {wm}")
+    if sd.freq_min is not None and sd.freq_max is not None:
+        band = f"{sd.freq_min:g}–{sd.freq_max:g} Hz"
+        if sd.n_bands:
+            band += f" ({sd.n_bands} bands)"
+        out.append(f"- **Frequency coverage:** {band}")
+    if sd.prior_link:
+        out.append(f"- **Prior:** [prior model]({sd.prior_link})")
+    if sd.n_posteriors is not None:
+        out.append(f"- **Posterior files:** {sd.n_posteriors}")
+    out.append("")
+    return out
 
 
 def render_run_page(run: RunMeta) -> str:
     """Return the Markdown body for a single run's detail page."""
     lines: list[str] = [f"# {run.id}", "", _badge(run.status.value), "", run.description, ""]
 
-    lines += ["## Details", ""]
-    if run.code.tag:
-        lines.append(f"- **Code tag:** `{run.code.tag}`")
-    if run.code.phentax_version:
-        lines.append(f"- **phentax:** `{run.code.phentax_version}`")
-    if run.code.code_link:
-        lines.append(f"- **Code:** {run.code.code_link}")
-    if run.sources:
-        lines.append(f"- **Sources:** {', '.join(run.sources)}")
-    if run.dataset:
-        lines.append(f"- **Dataset:** {run.dataset}")
+    analysis: list[str] = []
+    if run.domain:
+        analysis.append(f"- **Domain:** {run.domain}")
+    if run.start_freq_hz is not None:
+        analysis.append(f"- **Start frequency:** {run.start_freq_hz:g} Hz")
+    if run.end_freq_hz is not None:
+        analysis.append(f"- **End frequency:** {run.end_freq_hz:g} Hz")
+    if run.sampling_frequency_hz is not None:
+        analysis.append(f"- **Sampling frequency:** {run.sampling_frequency_hz:g} Hz")
     if run.observation_time:
-        lines.append(f"- **Observation time:** {run.observation_time}")
+        analysis.append(f"- **Observation time:** {run.observation_time}")
+    if run.dataset:
+        analysis.append(f"- **Dataset:** {run.dataset}")
     if run.date_begin:
-        lines.append(f"- **Period:** {run.date_begin} → {run.date_end or ''}")
-    if run.config:
-        lines.append(f"- **Config:** {run.config}")
+        period = run.date_begin + (f" → {run.date_end}" if run.date_end else "")
+        analysis.append(f"- **Period:** {period}")
     if run.contact:
-        lines.append(f"- **Contact:** {run.contact}")
+        analysis.append(f"- **Contact:** {run.contact}")
+    if analysis:
+        lines += ["## Analysis", ""] + analysis + [""]
 
-    lines += ["", "## Results", ""]
+    if run.source_details:
+        lines += ["## Sources", ""]
+        for sd in run.source_details:
+            lines += _render_source(sd)
+
+    lines += ["## Results", ""]
     if run.results.cluster_paths or run.results.cloud_urls:
         for cp in run.results.cluster_paths:
             lines.append(f"- **{cp.host}:** `{cp.path}`")
@@ -134,7 +149,7 @@ def render_run_page(run: RunMeta) -> str:
     else:
         lines.append("_No results recorded yet._")
 
-    if run.plots:  # reserved for future figures
+    if run.plots:
         lines += ["", "## Plots", ""]
         for p in run.plots:
             lines.append(f"- {p}")

@@ -12,21 +12,18 @@ def _write(path: Path, text: str) -> Path:
 
 
 def test_minimal_valid_applies_defaults():
-    m = RunMeta.model_validate(
-        {"id": "run-0", "status": "complete", "description": "test run"}
-    )
+    m = RunMeta.model_validate({"id": "run-0", "status": "complete", "description": "t"})
     assert m.id == "run-0"
     assert m.status.value == "complete"
     assert m.sources == []
+    assert m.source_details == []
+    assert m.domain is None
     assert m.results.cluster_paths == []
-    assert m.code.tag is None
 
 
 def test_invalid_status_rejected():
     with pytest.raises(ValidationError):
-        RunMeta.model_validate(
-            {"id": "x", "status": "finished", "description": "d"}
-        )
+        RunMeta.model_validate({"id": "x", "status": "finished", "description": "d"})
 
 
 def test_missing_required_rejected():
@@ -36,37 +33,39 @@ def test_missing_required_rejected():
 
 def test_unknown_key_rejected():
     with pytest.raises(ValidationError):
-        RunMeta.model_validate(
-            {"id": "x", "status": "complete", "description": "d", "tagg": "oops"}
-        )
+        RunMeta.model_validate({"id": "x", "status": "complete", "description": "d", "nope": 1})
+
+
+def test_source_detail_validates():
+    m = RunMeta.model_validate({
+        "id": "x", "status": "complete", "description": "d",
+        "source_details": [{"type": "MBHB", "n_found": 6}],
+    })
+    assert m.source_details[0].type == "MBHB"
+    assert m.source_details[0].n_found == 6
 
 
 def test_load_runs_skips_template_and_sorts(tmp_path):
     runs = tmp_path / "runs"
-    _write(runs / "_template" / "meta.yaml",
-           "id: tmpl\nstatus: planned\ndescription: template\n")
-    _write(runs / "run-1" / "meta.yaml",
-           "id: run-1\nstatus: running\ndescription: one\n")
-    _write(runs / "run-0" / "meta.yaml",
-           "id: run-0\nstatus: complete\ndescription: zero\n")
-    loaded = load_runs(runs)
-    assert [r.id for r in loaded] == ["run-0", "run-1"]
+    _write(runs / "_template" / "meta.yaml", "id: tmpl\nstatus: planned\ndescription: t\n")
+    _write(runs / "run-1" / "meta.yaml", "id: run-1\nstatus: running\ndescription: one\n")
+    _write(runs / "run-0" / "meta.yaml", "id: run-0\nstatus: complete\ndescription: zero\n")
+    assert [r.id for r in load_runs(runs)] == ["run-0", "run-1"]
 
 
 def test_load_run_error_names_file(tmp_path):
-    bad = _write(tmp_path / "runs" / "bad" / "meta.yaml",
-                 "id: bad\nstatus: nope\ndescription: d\n")
+    bad = _write(tmp_path / "runs" / "bad" / "meta.yaml", "id: bad\nstatus: nope\ndescription: d\n")
     with pytest.raises(ValueError) as exc:
         load_run(bad)
     assert "bad/meta.yaml" in str(exc.value)
 
 
 def test_repo_runs_all_valid():
-    """Every committed runs/*/meta.yaml validates against RunMeta."""
     repo_runs = Path(__file__).resolve().parents[1] / "runs"
     loaded = load_runs(repo_runs)
     ids = [r.id for r in loaded]
-    assert "run-0" in ids
-    run0 = next(r for r in loaded if r.id == "run-0")
-    assert run0.code.tag == "cdl1-run0"
-    assert run0.sources == ["PSD"]
+    assert "run-1" in ids
+    run1 = next(r for r in loaded if r.id == "run-1")
+    assert run1.domain == "frequency"
+    mbhb = next(s for s in run1.source_details if s.type == "MBHB")
+    assert mbhb.n_found == 6

@@ -7,5 +7,4 @@ At the moment, the repository contains:
 
 ## Runs catalog
 A browsable catalog of global-fit runs (sources, code versions, where to find
-results) is published from this repo via GitHub Pages. See [`docs/`](./docs) and
-the [Adding a run](./docs/adding-a-run.md) guide.
+results) is published from this repo via GitHub Pages. See [`docs/`](./docs).

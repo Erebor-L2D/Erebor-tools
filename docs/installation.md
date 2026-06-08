@@ -5,10 +5,8 @@ We assume you are installing a specific ``TAG_NAME`` version of the codes, provi
 In the same way, we assume you want to install the ``PHENTAX_VERSION`` version of the `phentax` package. We provide a mapping between the global fit runs and the code versions below.
 
 ## TAG_NAME and PHENTAX_VERSION
-We provide a mapping between the global fit runs and the code versions below.
-Each run links to its full details.
-
-{{ install_table }}
+See the [runs catalog](index.md) for the list of runs. Per-run code versions are
+not tracked on the site at the moment.
 
 
 ## Prerequisites

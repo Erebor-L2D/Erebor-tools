@@ -15,13 +15,6 @@ class Status(str, Enum):
     archived = "archived"
 
 
-class CodeInfo(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    tag: str | None = None
-    phentax_version: str | None = None
-    code_link: str | None = None
-
-
 class ClusterPath(BaseModel):
     model_config = ConfigDict(extra="forbid")
     host: str
@@ -34,6 +27,22 @@ class Results(BaseModel):
     cloud_urls: list[str] = Field(default_factory=list)
 
 
+class SourceDetail(BaseModel):
+    """Per-source-type metadata shown on a run's detail page."""
+
+    model_config = ConfigDict(extra="forbid")
+    type: str
+    n_found: int | None = None
+    waveform_model: str | None = None
+    waveform_model_link: str | None = None
+    freq_min: float | None = None
+    freq_max: float | None = None
+    n_bands: int | None = None
+    prior_link: str | None = None
+    n_posteriors: int | None = None
+    noise_model: str | None = None  # only for the NOISE entry
+
+
 class RunMeta(BaseModel):
     """Validated metadata for one global-fit run."""
 
@@ -44,14 +53,22 @@ class RunMeta(BaseModel):
     description: str
     date_begin: str | None = None
     date_end: str | None = None
-    code: CodeInfo = Field(default_factory=CodeInfo)
-    sources: list[str] = Field(default_factory=list)
-    dataset: str | None = None
+
+    # analysis configuration
+    domain: str | None = None  # frequency | time | time-frequency
+    start_freq_hz: float | None = None
+    end_freq_hz: float | None = None
+    sampling_frequency_hz: float | None = None
     observation_time: str | None = None
+
+    dataset: str | None = None
+    sources: list[str] = Field(default_factory=list)  # high-level chips
+    source_details: list[SourceDetail] = Field(default_factory=list)
+
     results: Results = Field(default_factory=Results)
     config: str | None = None
     contact: str | None = None
-    plots: list = Field(default_factory=list)  # reserved for future per-run figures
+    plots: list = Field(default_factory=list)
 
 
 def load_run(path: Path) -> RunMeta:

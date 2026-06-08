@@ -1,9 +1,9 @@
 from erebortools.website.run_meta import RunMeta
-from erebortools.website.render import render_catalog
+from erebortools.website.render import render_catalog, render_run_page
 
 
 def _run(**kw):
-    base = {"id": "run-0", "status": "complete", "description": "dev run"}
+    base = {"id": "run-1", "status": "complete", "description": "dev run"}
     base.update(kw)
     return RunMeta.model_validate(base)
 
@@ -17,14 +17,11 @@ def test_catalog_has_both_views_and_toggle():
 
 
 def test_catalog_renders_run_fields():
-    html = render_catalog([
-        _run(code={"tag": "cdl1-run0"}, sources=["PSD", "MBHB"], dataset="simulated")
-    ])
-    assert 'href="runs/run-0/"' in html
-    assert "cdl1-run0" in html
+    html = render_catalog([_run(sources=["MBHB", "GB"], dataset="mojito light")])
+    assert 'href="runs/run-1/"' in html
     assert "gf-done" in html
-    assert ">PSD<" in html and ">MBHB<" in html
-    assert "simulated" in html
+    assert ">MBHB<" in html and ">GB<" in html
+    assert "mojito light" in html
 
 
 def test_catalog_escapes_html():
@@ -33,43 +30,33 @@ def test_catalog_escapes_html():
     assert "&lt;script&gt;" in html
 
 
-from erebortools.website.render import render_install_table
-
-
-def test_install_table_has_header_and_rows():
-    md = render_install_table([
-        _run(code={"tag": "cdl1-run0", "phentax_version": "0.1.1b4"}),
-    ])
-    assert "| Run | TAG_NAME | PHENTAX_VERSION | Status |" in md
-    assert "`cdl1-run0`" in md
-    assert "`0.1.1b4`" in md
-    assert "[run-0](runs/run-0.md)" in md
-
-
-def test_install_table_handles_missing_fields():
-    md = render_install_table([_run(id="run-9", status="planned")])
-    assert "[run-9](runs/run-9.md)" in md
-    assert "| `—` | `—` |" in md
-
-
-from erebortools.website.render import render_run_page
-
-
-def test_run_page_includes_core_fields():
+def test_run_page_has_analysis_and_sources():
     md = render_run_page(_run(
-        code={"tag": "cdl1-run0"},
-        sources=["PSD"],
-        dataset="simulated",
-        contact="someone@example.com",
-        results={"cluster_paths": [{"host": "hpc", "path": "/data/run0"}]},
+        domain="frequency",
+        start_freq_hz=0.0001,
+        end_freq_hz=0.029,
+        sampling_frequency_hz=0.2,
+        observation_time="0.75 yr",
+        sources=["MBHB", "NOISE"],
+        source_details=[
+            {"type": "MBHB", "n_found": 6, "waveform_model": "PhenomTHMTDIWaveform",
+             "waveform_model_link": "https://example.org/wf", "freq_min": 0.0001,
+             "freq_max": 0.029, "n_bands": 1, "prior_link": "https://example.org/prior",
+             "n_posteriors": 6},
+            {"type": "NOISE", "noise_model": "parametric"},
+        ],
     ))
-    assert md.startswith("# run-0")
-    assert "dev run" in md
-    assert "`cdl1-run0`" in md
-    assert "PSD" in md
-    assert "simulated" in md
-    assert "someone@example.com" in md
-    assert "/data/run0" in md
+    assert md.startswith("# run-1")
+    assert "## Analysis" in md
+    assert "**Domain:** frequency" in md
+    assert "Start frequency:" in md and "0.0001 Hz" in md
+    assert "Sampling frequency:" in md and "0.2 Hz" in md
+    assert "## Sources" in md
+    assert "### MBHB" in md
+    assert "Sources found:** 6" in md
+    assert "[PhenomTHMTDIWaveform](https://example.org/wf)" in md
+    assert "### NOISE" in md
+    assert "Noise model:** parametric" in md
 
 
 def test_run_page_no_results_message():
