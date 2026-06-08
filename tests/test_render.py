@@ -50,3 +50,28 @@ def test_install_table_handles_missing_fields():
     md = render_install_table([_run(id="run-9", status="planned")])
     assert "[run-9](runs/run-9.md)" in md
     assert "| `—` | `—` |" in md
+
+
+from erebor_site.render import render_run_page
+
+
+def test_run_page_includes_core_fields():
+    md = render_run_page(_run(
+        code={"tag": "cdl1-run0"},
+        sources=["PSD"],
+        dataset="simulated",
+        contact="someone@example.com",
+        results={"cluster_paths": [{"host": "hpc", "path": "/data/run0"}]},
+    ))
+    assert md.startswith("# run-0")
+    assert "dev run" in md
+    assert "`cdl1-run0`" in md
+    assert "PSD" in md
+    assert "simulated" in md
+    assert "someone@example.com" in md
+    assert "/data/run0" in md
+
+
+def test_run_page_no_results_message():
+    md = render_run_page(_run())
+    assert "No results recorded yet" in md
