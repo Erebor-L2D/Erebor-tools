@@ -11,7 +11,8 @@ dependencies = [
   "mkdocs-material>=9.5",
   "pydantic>=2.6",
   "pyyaml>=6.0",
-  "pymdown-extensions>=10.7"
+  "pymdown-extensions>=10.7",
+  "gpubackendtools @ git+https://github.com/Erebor-L2D/GPUBackendTools.git@v0.1.1.post2",
 ]
 
 [project.optional-dependencies]
@@ -20,7 +21,6 @@ dependencies = [
 #   --extra-index-url https://test.pypi.org/simple/
 globalfit = [
   "eryn @ git+https://github.com/Erebor-L2D/Eryn.git@v1.2.7.post1",
-  "gpubackendtools @ git+https://github.com/Erebor-L2D/GPUBackendTools.git@v0.1.1.post2",
   "lisaanalysistools @ git+https://github.com/Erebor-L2D/LISAanalysistools.git@v1.2.8.post2",
   "gbgpu @ git+https://github.com/Erebor-L2D/GBGPU.git@v1.2.5.post1",
   "fastlisaresponse @ git+https://github.com/asantini29/lisa-on-gpu.git@v1.2.1.post1",
