@@ -2,7 +2,7 @@ import textwrap
 import pytest
 from pathlib import Path
 from pydantic import ValidationError
-from erebor_site.run_meta import RunMeta, load_run, load_runs
+from erebortools.website.run_meta import RunMeta, load_run, load_runs
 
 
 def _write(path: Path, text: str) -> Path:

@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "erebor-tools-site"
+name = "erebortools"
 version = "0.0.0"
 description = "Erebor global-fit runs catalog website"
 requires-python = ">=3.12"
@@ -18,7 +18,7 @@ dependencies = [
 dev = ["pytest>=8.0"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["erebor_site"]
+packages = ["src/erebortools"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

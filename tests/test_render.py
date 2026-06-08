@@ -1,5 +1,5 @@
-from erebor_site.run_meta import RunMeta
-from erebor_site.render import render_catalog
+from erebortools.website.run_meta import RunMeta
+from erebortools.website.render import render_catalog
 
 
 def _run(**kw):
@@ -33,7 +33,7 @@ def test_catalog_escapes_html():
     assert "&lt;script&gt;" in html
 
 
-from erebor_site.render import render_install_table
+from erebortools.website.render import render_install_table
 
 
 def test_install_table_has_header_and_rows():
@@ -52,7 +52,7 @@ def test_install_table_handles_missing_fields():
     assert "| `—` | `—` |" in md
 
 
-from erebor_site.render import render_run_page
+from erebortools.website.render import render_run_page
 
 
 def test_run_page_includes_core_fields():

@@ -2,8 +2,8 @@ import json
 import yaml
 from pathlib import Path
 
-from erebor_site.run_meta import RunMeta
-from erebor_site.from_metadata import derive_id, derive_tag, map_metadata, convert
+from erebortools.website.run_meta import RunMeta
+from erebortools.website.from_metadata import derive_id, derive_tag, map_metadata, convert
 
 SAMPLE = Path(__file__).parent / "data" / "global_metadata.sample.json"
 
