@@ -1,6 +1,6 @@
 # Installation
 
-There are two ways to install the Erebor stack:
+There are two ways to install the L2D Erebor stack:
 
 - **[Quick install (pip / uv)](#quick-install-pip-uv)** — recommended. One command,
   versions pinned for you.

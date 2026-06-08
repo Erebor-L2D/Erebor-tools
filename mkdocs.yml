@@ -1,5 +1,5 @@
-site_name: Erebor global-fit runs
-site_description: Catalog of Erebor LISA global-fit runs, sources, and results.
+site_name: L2D Erebor global fit runs
+site_description: Catalog of L2D Erebor global fit runs, sources, and results.
 site_url: https://erebor-l2d.github.io/Erebor-tools/
 
 theme:

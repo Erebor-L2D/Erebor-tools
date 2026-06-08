@@ -633,7 +633,7 @@ requires-dist = [
     { name = "fastlisaresponse", marker = "extra == 'globalfit'", git = "https://github.com/asantini29/lisa-on-gpu.git?rev=v1.2.1.post1" },
     { name = "gbgpu", marker = "extra == 'globalfit'", git = "https://github.com/Erebor-L2D/GBGPU.git?rev=v1.2.5.post1" },
     { name = "gpubackendtools", marker = "extra == 'globalfit'", git = "https://github.com/Erebor-L2D/GPUBackendTools.git?rev=v0.1.1.post1" },
-    { name = "lisaanalysistools", marker = "extra == 'globalfit'", git = "https://github.com/Erebor-L2D/LISAanalysistools.git?rev=v1.2.8.post1" },
+    { name = "lisaanalysistools", marker = "extra == 'globalfit'", git = "https://github.com/Erebor-L2D/LISAanalysistools.git?rev=v1.2.8.post2" },
     { name = "mkdocs-material", specifier = ">=9.5" },
     { name = "phentax", marker = "extra == 'globalfit'", specifier = "==0.1.1b5", index = "https://test.pypi.org/simple/" },
     { name = "pydantic", specifier = ">=2.6" },
@@ -1342,8 +1342,8 @@ wheels = [
 
 [[package]]
 name = "lisaanalysistools"
-version = "1.2.8.post1"
-source = { git = "https://github.com/Erebor-L2D/LISAanalysistools.git?rev=v1.2.8.post1#d0df0c50015897678f6250ccca4934dc46094645" }
+version = "1.2.8.post2"
+source = { git = "https://github.com/Erebor-L2D/LISAanalysistools.git?rev=v1.2.8.post2#3423398cee2d248fb6e3673534a49588fc642c90" }
 dependencies = [
     { name = "astropy" },
     { name = "cudakima" },
