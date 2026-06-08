@@ -1,114 +1,169 @@
-# Installation instructions
-The installation process for this project may not be straightforward, given the necessity of linking the CUDA / C++ code.
+# Installation
 
-We assume you are installing a specific ``TAG_NAME`` version of the codes, provided by the Erebor group to identify a specific global fit run. 
-In the same way, we assume you want to install the ``PHENTAX_VERSION`` version of the `phentax` package. We provide a mapping between the global fit runs and the code versions below.
+There are two ways to install the Erebor stack:
 
-## TAG_NAME and PHENTAX_VERSION
-See the [runs catalog](index.md) for the list of runs. Per-run code versions are
-not tracked on the site at the moment.
+- **[Quick install (pip / uv)](#quick-install-pip-uv)** — recommended. One command,
+  versions pinned for you.
+- **[From source (legacy)](#from-source-legacy)** — the manual, repo-by-repo build;
+  useful for development (editable installs) or when you need a specific tag.
 
+Either way the native packages (`gpubackendtools`, `lisaanalysistools`, …) compile
+C++/CUDA, so install the build prerequisites **first**.
 
 ## Prerequisites
-- CMake 
-- A compatible C++ compiler
-- if you are installing on a GPU machine, you will also need to have the CUDA toolkit installed and visible on your PATH.
 
-## Installation steps
-### Creating a virtual environment
-We strongly recommend using `uv` for the installation. You can install `uv` using:
-```bash 
-curl -LsSf https://astral.sh/uv/install.sh | sh
+- **CMake** and a compatible **C++ compiler**.
+- **LAPACK / LAPACKE** — see [Making LAPACK findable](#making-lapack-findable-required) below.
+- **GPU only:** the matching **CUDA toolkit** on your `PATH`, plus the matching
+  `cupy` (`cupy-cuda12x` / `cupy-cuda13x`).
+
+### Making LAPACK findable (required)
+
+The CPU backend links **LAPACKE**, and the build won't find it automatically on
+most machines — so point CMake / `pkg-config` at it by exporting two variables
+**before** you install. Pick the block matching your setup:
+
+**conda (macOS or Linux):**
+```bash
+# Create and activate an environment first, if you don't have one yet:
+conda create -n erebor python=3.12
+conda activate erebor
+
+conda install -c conda-forge lapack lapacke
+export PKG_CONFIG_PATH="$CONDA_PREFIX/lib/pkgconfig:$PKG_CONFIG_PATH"
+export CMAKE_PREFIX_PATH="$CONDA_PREFIX:$CMAKE_PREFIX_PATH"
 ```
-Then, create a virtual environment in the root of the project and activate the virtual environment:
+
+**macOS (Homebrew):**
+```bash
+brew install lapack
+export PKG_CONFIG_PATH="$(brew --prefix lapack)/lib/pkgconfig:$PKG_CONFIG_PATH"
+export CMAKE_PREFIX_PATH="$(brew --prefix lapack):$CMAKE_PREFIX_PATH"
+```
+
+**Linux (apt / system):**
+```bash
+sudo apt-get install -y cmake g++ pkg-config liblapack-dev liblapacke-dev
+# Usually found on the default path. If the build still can't locate it, point at
+# the install prefix, e.g.:
+export PKG_CONFIG_PATH="/usr/lib/$(uname -m)-linux-gnu/pkgconfig:$PKG_CONFIG_PATH"
+```
+
+!!! note
+    If LAPACK still isn't found, `gpubackendtools` falls back to downloading and
+    compiling LAPACK from source — the build still succeeds, just more slowly.
+
+## Quick install (pip / uv)
+
+With the LAPACK variables above exported in your shell:
+
+**pip (works in a conda or plain venv) — straight from git:**
+```bash
+pip install --extra-index-url https://test.pypi.org/simple/ \
+  "erebortools[globalfit] @ git+https://github.com/Erebor-L2D/Erebor-tools.git"
+```
+
+**pip — from a local clone:**
+```bash
+git clone https://github.com/Erebor-L2D/Erebor-tools.git
+cd Erebor-tools
+pip install --extra-index-url https://test.pypi.org/simple/ ".[globalfit]"
+```
+
+**uv (from a clone):**
+```bash
+uv pip install ".[globalfit]"
+```
+uv reads the TestPyPI index from `pyproject.toml`, so it pulls `phentax`
+automatically — no `--extra-index-url` needed. (Plain pip *does* need that flag:
+it can't read the index from `pyproject.toml`.)
+
+The `globalfit` extra pins the whole stack (Eryn, GPUBackendTools,
+LISAanalysistools, GBGPU, lisa-on-gpu, phentax) at known-good tags.
+
+**Check it worked:**
+```bash
+python -c "import lisatools; print(lisatools.get_backend('cpu'))"
+```
+On a GPU machine with the matching CUDA toolkit + cupy:
+```bash
+python -c "import lisatools; print(lisatools.get_backend('cuda_12x'))"  # adjust CUDA version
+```
+
+## From source (legacy)
+
+The manual, repo-by-repo build. Prefer this for development (editable `-e`
+installs) or to check out a specific `TAG_NAME`. Per-run tags are listed in the
+[runs catalog](index.md). Make sure the [LAPACK variables](#making-lapack-findable-required)
+are exported first.
+
+### Create and activate a virtual environment
 ```bash
 uv venv --python 3.12
 source .venv/bin/activate
 uv pip install scikit_build_core setuptools_scm mojito cython
 ```
-if you are installing on a GPU machine, you will also need to install the appropriate version of `cupy` for your CUDA toolkit. For example, if you have CUDA 12 installed, you can install `cupy` with:
+On a GPU machine also install the matching cupy, e.g. `uv pip install cupy-cuda12x`.
+
+### Eryn (the sampler core)
 ```bash
-uv pip install cupy-cuda12x
-```
-Replace `cuda12x` with the appropriate version if necessary.
-### Cloning the repositories
-Before cloning the actual global fit code, install the development branch of the `eryn` sampler:
-```bash
-git clone https://github.com/Erebor-L2D/Eryn 
-cd Eryn
-git checkout gf-dev
-cd ..
+git clone https://github.com/Erebor-L2D/Eryn
+cd Eryn && git checkout gf-dev && cd ..
 uv pip install -e Eryn/
 ```
-This is the core of `Erebor`.
 
-Then, we need to clone the repository `GPUBackendTools`. All the libraries in the `LISAAnalysistools` suit rely on it.
+### GPUBackendTools
+All the LISAanalysistools suite relies on it.
 ```bash
-git clone git@github.com:Erebor-L2D/GPUBackendTools.git
-cd GPUBackendTools
-git checkout TAG_NAME # replace with the tag name you want to checkout
-cd ..
+git clone https://github.com/Erebor-L2D/GPUBackendTools.git
+cd GPUBackendTools && git checkout TAG_NAME && cd ..   # replace TAG_NAME
 ```
-If `TAG_NAME` is not of the form `vX.Y.Z`, we need to work around `setuptools` with the following command:
+If `TAG_NAME` is not of the form `vX.Y.Z`, set a pretend version so
+`setuptools_scm` is happy:
 ```bash
 SETUPTOOLS_SCM_PRETEND_VERSION=0.1.0 uv pip install -e GPUBackendTools/
 ```
 
-Then, we can clone the `LISAAnalysistools` repository:
+### LISAanalysistools
 ```bash
-git clone git@github.com:Erebor-L2D/LISAanalysistools.git
-cd LISAanalysistools
-git checkout TAG_NAME # replace with the tag name you want to checkout
-cd ..
+git clone https://github.com/Erebor-L2D/LISAanalysistools.git
+cd LISAanalysistools && git checkout TAG_NAME && cd ..
+SETUPTOOLS_SCM_PRETEND_VERSION=2.0.0 uv pip install --no-build-isolation LISAanalysistools/
 ```
-Install the `LISAAnalysistools` package with:
-```bash
-SETUPTOOLS_SCM_PRETEND_VERSION=2.0.0 uv pip install --no-build-isolation LISAanalysistools/ # we need a high version here to comply with the minimum version required by downstream packages
-```
-You can check the installation worked by running the following command:
+(The high pretend version satisfies downstream minimum-version requirements.)
+Check:
 ```bash
 uv run python -c "import lisatools; print(lisatools.get_backend('cpu'))"
 ```
-This should print the CPU backend. If you have a compatible GPU and CUDA toolkit installed with CUDA 11, 12, or 13, you can also check the GPU backend with:
-```bash
-uv run python -c "import lisatools; print(lisatools.get_backend('cuda_12x')) # replace with the appropriate CUDA version if necessary"
-```
-We are skipping this here.
 
-We can now install the response code:
+### lisa-on-gpu (the response)
 ```bash
-git clone git@github.com:asantini29/lisa-on-gpu.git #NOTE: this will be replaced with a fork on the Erebor-L2D organization
-cd lisa-on-gpu
-git checkout TAG_NAME # replace with the tag name you want to checkout
-cd ..
+git clone https://github.com/asantini29/lisa-on-gpu.git   # TODO: Erebor-L2D fork
+cd lisa-on-gpu && git checkout TAG_NAME && cd ..
 SETUPTOOLS_SCM_PRETEND_VERSION=0.1.0 uv pip install --no-build-isolation lisa-on-gpu/
-```
-Again, you can check the installation worked by running the following command:
-```bash
 uv run python -c "import fastlisaresponse; print(fastlisaresponse.get_backend('cpu'))"
 ```
-Finally, clone and the install the `gbgpu` package, used for galactic binary waveform generation:
-```bash
-git clone git@github.com:Erebor-L2D/GBGPU.git
-cd GBGPU
-git checkout TAG_NAME # replace with the tag name you want to checkout
-cd ..
-SETUPTOOLS_SCM_PRETEND_VERSION=0.1.0 uv pip install --no-build-isolation GBGPU/
-``` 
 
-Now install the `bbhx` package, used for useful transformations and proposals:
+### GBGPU (galactic-binary waveforms)
+```bash
+git clone https://github.com/Erebor-L2D/GBGPU.git
+cd GBGPU && git checkout TAG_NAME && cd ..
+SETUPTOOLS_SCM_PRETEND_VERSION=0.1.0 uv pip install --no-build-isolation GBGPU/
+```
+
+### bbhx and phentax
 ```bash
 uv pip install bbhx
-```
-and the `phentax` package, currently used for massive black hole binary waveform generation:
-```bash
 uv pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ 'phentax[cpu] == PHENTAX_VERSION'
 ```
-Replace `[cpu]` with `[cuda12]` or `[cuda13]` if you have a compatible GPU and CUDA toolkit installed.
+Replace `[cpu]` with `[cuda12]` / `[cuda13]` on a GPU machine.
 
-That should be it! If you have made it this far, you should now have all the necessary packages to interact with our global fit code and results.
+That's it — you now have the full stack.
 
 ## Note on the installation process
-As it should expected, all of the codes we have installed are in active development, and not in their final form. This means that the installation process may change in the future. If you encounter any issues during the installation, please reach out one of us or send an email to [our group email](mailto:ereborl2d@googlegroups.com).
+
+These codes are under active development, so the process may change. If you hit
+any issue, please open an issue here or email
+[the Erebor group](mailto:ereborl2d@googlegroups.com).
 
 *~~ The Erebor group ~~*
