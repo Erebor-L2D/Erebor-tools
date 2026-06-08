@@ -31,3 +31,22 @@ def test_catalog_escapes_html():
     html = render_catalog([_run(description="<script>x</script>")])
     assert "<script>x</script>" not in html
     assert "&lt;script&gt;" in html
+
+
+from erebor_site.render import render_install_table
+
+
+def test_install_table_has_header_and_rows():
+    md = render_install_table([
+        _run(code={"tag": "cdl1-run0", "phentax_version": "0.1.1b4"}),
+    ])
+    assert "| Run | TAG_NAME | PHENTAX_VERSION | Status |" in md
+    assert "`cdl1-run0`" in md
+    assert "`0.1.1b4`" in md
+    assert "[run-0](runs/run-0.md)" in md
+
+
+def test_install_table_handles_missing_fields():
+    md = render_install_table([_run(id="run-9", status="planned")])
+    assert "[run-9](runs/run-9.md)" in md
+    assert "| `—` | `—` |" in md
