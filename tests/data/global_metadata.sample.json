@@ -1,0 +1,16 @@
+{
+  "global_fit_version": "cdl1_run0",
+  "global_fit_contact": "ereborl2d@googlegroups.com",
+  "global_fit_code_link": "https://github.com/Erebor-L2D/LISAanalysistools",
+  "input_reference": "LDC Sangria",
+  "input_data_link": "/cluster/erebor/run0/input_data.h5",
+  "submission_parent_folder": "/cluster/erebor/run0",
+  "noise_model": "XYZSensitivityBackend",
+  "comment": "First multi-source fit on Sangria.",
+  "found_source_types_list": ["mbh", "gb", "psd"],
+  "searched_source_types_list": ["mbh", "gb", "psd"],
+  "observation_period_begin": "2026-06-01T000000",
+  "observation_period_end": "2027-06-01T000000",
+  "effective_observation_duration": "1 yr",
+  "submission_timestamp": "2026-06-07T120000"
+}
