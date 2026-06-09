@@ -61,6 +61,7 @@ With the LAPACK variables above exported in your shell:
 ```bash
 pip install --extra-index-url https://test.pypi.org/simple/ \
   "erebortools[globalfit] @ git+https://github.com/Erebor-L2D/Erebor-tools.git"
+pip install --no-build-isolation   "fastlisaresponse @ git+https://github.com/asantini29/lisa-on-gpu.git@v1.2.1.post1"
 ```
 
 **pip — from a local clone:**
@@ -73,13 +74,14 @@ pip install --extra-index-url https://test.pypi.org/simple/ ".[globalfit]"
 **uv (from a clone):**
 ```bash
 uv pip install ".[globalfit]"
+uv pip install --no-build-isolation   "fastlisaresponse @ git+https://github.com/asantini29/lisa-on-gpu.git@v1.2.1.post1"
 ```
 uv reads the TestPyPI index from `pyproject.toml`, so it pulls `phentax`
 automatically — no `--extra-index-url` needed. (Plain pip *does* need that flag:
 it can't read the index from `pyproject.toml`.)
 
 The `globalfit` extra pins the whole stack (Eryn, GPUBackendTools,
-LISAanalysistools, GBGPU, lisa-on-gpu, phentax) at known-good tags.
+LISAanalysistools, GBGPU, phentax) at known-good tags. `fastlisaresponse` needs an explicit install for the time being, but the long-term plan is to deprecate it and include the response directly in `lisatools`.
 
 **Check it worked:**
 ```bash

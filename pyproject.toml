@@ -24,7 +24,9 @@ globalfit = [
   "lisaanalysistools @ git+https://github.com/Erebor-L2D/LISAanalysistools.git@v1.2.8.post2",
   "gbgpu @ git+https://github.com/Erebor-L2D/GBGPU.git@v1.2.5.post1",
   "bbhx",
-  "phentax==0.1.1b5"
+  "phentax==0.1.1b5",
+  "setuptools_scm",
+  "scikit_build_core"
 ]
 
 [dependency-groups]
