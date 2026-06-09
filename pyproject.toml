@@ -21,7 +21,7 @@ dependencies = [
 globalfit = [
   "gpubackendtools @ git+https://github.com/Erebor-L2D/GPUBackendTools.git@v0.1.1.post2",
   "eryn @ git+https://github.com/Erebor-L2D/Eryn.git@v1.2.7.post1",
-  "lisaanalysistools @ git+https://github.com/Erebor-L2D/LISAanalysistools.git@v1.2.8.post2",
+  "lisaanalysistools @ git+https://github.com/Erebor-L2D/LISAanalysistools.git@v1.2.8.post3",
   "gbgpu @ git+https://github.com/Erebor-L2D/GBGPU.git@v1.2.5.post1",
   "bbhx",
   "phentax==0.1.1b5",
