@@ -69,6 +69,7 @@ pip install --no-build-isolation   "fastlisaresponse @ git+https://github.com/as
 git clone https://github.com/Erebor-L2D/Erebor-tools.git
 cd Erebor-tools
 pip install --extra-index-url https://test.pypi.org/simple/ ".[globalfit]"
+pip install --no-build-isolation   "fastlisaresponse @ git+https://github.com/asantini29/lisa-on-gpu.git@v1.2.1.post1"
 ```
 
 **uv (from a clone):**
