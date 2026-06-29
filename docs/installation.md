@@ -12,7 +12,8 @@ C++/CUDA, so install the build prerequisites **first**.
 
 ## Prerequisites
 
-- **CMake** and a compatible **C++ compiler**.
+- **CMake** and compatible **C++ (C++17 or newer) and Fortran compilers**. If
+  `cmake` isn't already on your machine, the platform block below installs it for you.
 - **LAPACK / LAPACKE** — see [Making LAPACK findable](#making-lapack-findable-required) below.
 - **GPU only:** the matching **CUDA toolkit** on your `PATH`, plus the matching
   `cupy` (`cupy-cuda12x` / `cupy-cuda13x`).
@@ -29,14 +30,22 @@ most machines — so point CMake / `pkg-config` at it by exporting two variables
 conda create -n erebor python=3.12
 conda activate erebor
 
-conda install -c conda-forge liblapack liblapacke pkg-config
+# CMake, a Fortran compiler, and the full BLAS/LAPACK stack from conda-forge:
+conda install -c conda-forge --yes \
+  cmake fortran-compiler pkg-config \
+  lapack blas blas-devel libblas libcblas liblapack liblapacke libtmglib
 export PKG_CONFIG_PATH="$CONDA_PREFIX/lib/pkgconfig:$PKG_CONFIG_PATH"
 export CMAKE_PREFIX_PATH="$CONDA_PREFIX:$CMAKE_PREFIX_PATH"
+
+# Reactivate so conda's compiler vars ($CPPFLAGS, …) are populated, then force
+# C++17 — conda's compiler otherwise defaults to an older standard the build rejects:
+conda activate erebor
+export CXXFLAGS="-std=c++17 $CPPFLAGS"
 ```
 
 **macOS (Homebrew):**
 ```bash
-brew install lapack
+brew install cmake lapack   # drop cmake if you already have it
 export PKG_CONFIG_PATH="$(brew --prefix lapack)/lib/pkgconfig:$PKG_CONFIG_PATH"
 export CMAKE_PREFIX_PATH="$(brew --prefix lapack):$CMAKE_PREFIX_PATH"
 ```
@@ -52,6 +61,15 @@ export PKG_CONFIG_PATH="/usr/lib/$(uname -m)-linux-gnu/pkgconfig:$PKG_CONFIG_PAT
 !!! note
     If LAPACK still isn't found, `gpubackendtools` falls back to downloading and
     compiling LAPACK from source — the build still succeeds, just more slowly.
+
+!!! tip "C++17 build errors"
+    If a native package fails to compile with errors about C++ features needing a
+    newer standard, force C++17 **before** installing (the conda block above already
+    does this):
+    ```bash
+    export CXXFLAGS="-std=c++17 $CPPFLAGS"
+    ```
+    You can also prefix a single command instead: `CXXFLAGS="-std=c++17 $CPPFLAGS" pip install …`
 
 ## Quick install (pip / uv)
 
@@ -80,6 +98,15 @@ uv pip install --no-build-isolation   "fastlisaresponse @ git+https://github.com
 uv reads the TestPyPI index from `pyproject.toml`, so it pulls `phentax`
 automatically — no `--extra-index-url` needed. (Plain pip *does* need that flag:
 it can't read the index from `pyproject.toml`.)
+
+**Pin a specific Erebor-tools release.** To install a particular tag (or branch)
+instead of the default branch, append `@TAG_NAME` to the git URL:
+```bash
+pip install --extra-index-url https://test.pypi.org/simple/ \
+  "erebortools[globalfit] @ git+https://github.com/Erebor-L2D/Erebor-tools.git@TAG_NAME"
+```
+From a local clone, `git checkout TAG_NAME` before running the `pip`/`uv` install.
+Available tags are listed in the [runs catalog](index.md).
 
 The `globalfit` extra pins the whole stack (Eryn, GPUBackendTools,
 LISAanalysistools, GBGPU, phentax) at known-good tags. `fastlisaresponse` needs an explicit install for the time being, but the long-term plan is to deprecate it and include the response directly in `lisatools`.
