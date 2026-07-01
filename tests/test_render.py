@@ -18,7 +18,7 @@ def test_catalog_has_both_views_and_toggle():
 
 def test_catalog_renders_run_fields():
     html = render_catalog([_run(sources=["MBHB", "GB"], dataset="mojito light", version="v3", erebortools_version="v0.1.0")])
-    assert 'href="runs/run-1/"' in html
+    assert 'href="runs/run-1/v3/"' in html  # versioned runs nest under the run id
     assert "gf-done" in html
     assert ">MBHB<" in html and ">GB<" in html
     assert "mojito light" in html
@@ -26,6 +26,11 @@ def test_catalog_renders_run_fields():
     assert ">v3<" in html
     assert "<th>erebortools</th>" in html
     assert "releases/tag/v0.1.0" in html
+
+
+def test_catalog_unversioned_run_links_flat():
+    html = render_catalog([_run()])  # no version -> page stays at runs/<id>/
+    assert 'href="runs/run-1/"' in html
 
 
 def test_catalog_escapes_html():
@@ -52,7 +57,7 @@ def test_run_page_has_analysis_and_sources():
             {"type": "NOISE", "noise_model": "parametric"},
         ],
     ))
-    assert md.startswith("# run-1")
+    assert md.startswith("# run-1 · v3")  # heading carries the version
     assert "## Analysis" in md
     assert "**Domain:** frequency" in md
     assert "Start frequency:" in md and "0.0001 Hz" in md

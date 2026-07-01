@@ -1,6 +1,7 @@
 """Run metadata schema (the single source of truth for each global-fit run)."""
 from __future__ import annotations
 
+import re
 from enum import Enum
 from pathlib import Path
 
@@ -83,12 +84,35 @@ def load_run(path: Path) -> RunMeta:
         raise ValueError(f"Invalid run metadata in {label}: {exc}") from exc
 
 
+def _version_sort_key(version: str | None) -> tuple[int, int, str]:
+    """Order unversioned runs first, then by numeric version (v3 < v4 < v10)."""
+    if not version:
+        return (0, 0, "")
+    m = re.search(r"\d+", version)
+    return (1, int(m.group()) if m else 0, version)
+
+
 def load_runs(runs_dir: Path) -> list[RunMeta]:
-    """Load every runs/*/meta.yaml (skipping _underscore dirs), sorted by id."""
+    """Load every runs/*/meta*.yaml (skipping _underscore dirs).
+
+    A run directory may hold several versioned files (meta_v3.yaml,
+    meta_v4.yaml, ...); each is loaded as its own RunMeta so every version
+    of a run shows up in the catalog. Sorted by (id, version).
+    """
     runs_dir = Path(runs_dir)
     out: list[RunMeta] = []
-    for meta in runs_dir.glob("*/meta.yaml"):
+    for meta in runs_dir.glob("*/meta*.yaml"):
         if meta.parent.name.startswith("_"):
             continue
         out.append(load_run(meta))
-    return sorted(out, key=lambda r: r.id)
+    return sorted(out, key=lambda r: (r.id, _version_sort_key(r.version)))
+
+
+def run_page_slug(run: RunMeta) -> str:
+    """Docs-relative page path (no extension) for one run version.
+
+    Versions nest under the run: 'run-1/v3' -> URL runs/run-1/v3/.
+    Unversioned runs stay flat: 'run-1' -> URL runs/run-1/. This is the single
+    source of truth shared by the page generator (hooks) and the catalog links.
+    """
+    return f"{run.id}/{run.version}" if run.version else run.id

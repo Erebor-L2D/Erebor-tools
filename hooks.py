@@ -13,7 +13,7 @@ from erebortools.website.render import (
     render_catalog,
     render_run_page,
 )
-from erebortools.website.run_meta import load_runs
+from erebortools.website.run_meta import load_runs, run_page_slug
 
 _RUNS_DIR = Path("runs")
 
@@ -23,12 +23,12 @@ def _runs():
 
 
 def on_files(files, config):
-    """Add one generated Markdown page per run under docs runs/<id>.md."""
+    """Add one generated Markdown page per run version under docs runs/<slug>.md."""
     for run in _runs():
         files.append(
             File.generated(
                 config,
-                f"runs/{run.id}.md",
+                f"runs/{run_page_slug(run)}.md",
                 content=render_run_page(run),
             )
         )

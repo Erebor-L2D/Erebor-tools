@@ -158,7 +158,10 @@ def convert(json_path, out_dir=Path("runs"), erebortools_version: str | None = N
     meta = build_meta(m, erebortools_version)
     RunMeta.model_validate(meta)  # fail loudly if the draft is invalid
     text = _TODO_HEADER + yaml.safe_dump(meta, sort_keys=False, allow_unicode=True)
-    out = Path(out_dir) / m["id"] / f"meta_{m["version"]}.yaml"
+    # One file per version so multiple versions of a run coexist in runs/<id>/.
+    version = m.get("version")
+    filename = f"meta_{version}.yaml" if version else "meta.yaml"
+    out = Path(out_dir) / m["id"] / filename
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(text)
     return out

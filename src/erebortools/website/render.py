@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import html
 
-from .run_meta import RunMeta, SourceDetail
+from .run_meta import RunMeta, SourceDetail, run_page_slug
 
 _STATUS_CLASS = {
     "complete": "gf-done",
@@ -51,9 +51,10 @@ def render_catalog(runs: list[RunMeta]) -> str:
         status = r.status.value
         date = html.escape(r.date or "—")
         rid = html.escape(r.id)
+        href = f"runs/{html.escape(run_page_slug(r))}/"
         rows.append(
             "<tr>"
-            f'<td><a class="gf-link" href="runs/{rid}/">{rid}</a></td>'
+            f'<td><a class="gf-link" href="{href}">{rid}</a></td>'
             f'<td>{html.escape(r.version or "—")}</td>'
             f"<td>{_erebortools_link(r.erebortools_version)}</td>"
             f"<td>{_badge(status)}</td>"
@@ -65,7 +66,7 @@ def render_catalog(runs: list[RunMeta]) -> str:
         )
         cards.append(
             '<div class="gf-card">'
-            f'<h4><a class="gf-link" href="runs/{rid}/">{rid}</a> {_badge(status)}</h4>'
+            f'<h4><a class="gf-link" href="{href}">{rid}</a> {_badge(status)}</h4>'
             f'<div class="gf-meta">{(html.escape(r.version) + " · ") if r.version else ""}{html.escape(r.dataset or "—")} · {date}{(" · erebortools " + html.escape(r.erebortools_version)) if r.erebortools_version else ""}</div>'
             f"<div>{_chips(r.sources)}</div>"
             f'<div class="gf-desc">{html.escape(r.description)}</div>'
@@ -123,7 +124,8 @@ def _render_source(sd: SourceDetail) -> list[str]:
 
 def render_run_page(run: RunMeta) -> str:
     """Return the Markdown body for a single run's detail page."""
-    lines: list[str] = [f"# {run.id}", "", _badge(run.status.value), "", run.description, ""]
+    heading = f"{run.id} · {run.version}" if run.version else run.id
+    lines: list[str] = [f"# {heading}", "", _badge(run.status.value), "", run.description, ""]
 
     analysis: list[str] = []
     if run.version:
